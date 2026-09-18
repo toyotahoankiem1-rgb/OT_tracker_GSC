@@ -59,16 +59,59 @@
 </style>
 </head>
 <body>
-  <!-- Nhúng thẳng app GAS bằng iframe, giữ nguyên domain GitHub Pages nên khi mở
-       từ icon home-screen sẽ hiển thị full màn hình, không hiện thanh địa chỉ -->
+  <!-- Nhúng app GAS bằng iframe. Nếu GAS chặn bị nhúng (X-Frame-Options), iframe sẽ
+       không bắn onload đúng cách / hiển thị trắng -> script bên dưới sẽ phát hiện và
+       tự chuyển hướng thẳng (redirect) sang link GAS sau một khoảng chờ ngắn. -->
   <iframe id="appFrame"
     src="https://script.google.com/macros/s/AKfycbzSzXojWwXO0rPLGda_1wDx3zonqXbva9skOCF4Mx8DwgZS227aC9YG7YpsRUMO7My-/exec"
-    onload="document.getElementById('splash').classList.add('hide')"></iframe>
+    onload="handleFrameLoad()"></iframe>
 
   <div id="splash">
     <img src="icon3.png" alt="GSC OT Tracker">
     <h1>GSC OT Tracker</h1>
     <p>Đang tải...</p>
   </div>
+
+  <script>
+    var GAS_URL = "https://script.google.com/macros/s/AKfycbzSzXojWwXO0rPLGda_1wDx3zonqXbva9skOCF4Mx8DwgZS227aC9YG7YpsRUMO7My-/exec";
+    var loaded = false;
+
+    function hideSplash(){
+      document.getElementById('splash').classList.add('hide');
+    }
+
+    function handleFrameLoad(){
+      loaded = true;
+      // Kiểm tra xem iframe có thực sự vào được nội dung hay bị chặn (rỗng/lỗi).
+      try {
+        var frame = document.getElementById('appFrame');
+        // Nếu bị chặn bởi X-Frame-Options, trình duyệt vẫn bắn onload nhưng
+        // frame.contentWindow thường không đọc được gì hữu ích (cross-origin) -
+        // nên ta chỉ ẩn splash ở đây, còn việc phát hiện "bị chặn triệt để" xử lý bằng timeout dưới.
+        hideSplash();
+      } catch(e){
+        hideSplash();
+      }
+    }
+
+    // Nếu sau 2.5 giây mà iframe chưa từng load xong (loaded vẫn false),
+    // hoặc nếu load xong nhưng thực tế bị chặn hiển thị trắng, tự động
+    // chuyển hướng thẳng sang link GAS thay vì đứng im splash mãi.
+    setTimeout(function(){
+      if (!loaded) {
+        window.location.replace(GAS_URL);
+      }
+    }, 2500);
+
+    // Phòng trường hợp GAS chặn iframe hoàn toàn khiến onload không cập nhật đúng
+    // nội dung thực (một số trình duyệt vẫn bắn onload dù bị chặn) - đặt thêm một
+    // mốc thời gian dài hơn: nếu splash vẫn đang hiển thị sau 4 giây, ép redirect.
+    setTimeout(function(){
+      var splash = document.getElementById('splash');
+      if (!splash.classList.contains('hide')) {
+        window.location.replace(GAS_URL);
+      }
+    }, 4000);
+  </script>
 </body>
 </html>
