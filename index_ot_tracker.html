@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GSC OT Tracker</title>
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="GSC OT Tracker">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#c81e1e">
+
+<link rel="apple-touch-icon" href="icon3.png">
+<link rel="icon" href="icon3.png">
+
+<style>
+  html,body{
+    margin:0;padding:0;height:100%;width:100%;
+    background:#c81e1e;
+    overflow:hidden;
+  }
+  #appFrame{
+    position:fixed;top:0;left:0;
+    width:100%;height:100%;
+    border:none;display:block;
+  }
+
+  /* Splash screen hiện trong lúc chờ app GAS tải, tự ẩn khi xong */
+  #splash{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:#c81e1e;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+    color:#fff;text-align:center;
+    z-index:10;
+    transition:opacity .4s ease;
+  }
+  #splash.hide{
+    opacity:0;
+    pointer-events:none;
+  }
+  #splash img{
+    width:100px;height:100px;border-radius:22px;
+    margin-bottom:18px;
+    box-shadow:0 8px 24px rgba(0,0,0,.35);
+    animation:pulse 1.6s ease-in-out infinite;
+  }
+  #splash h1{
+    font-size:17px;margin:0 0 6px;font-weight:700;
+  }
+  #splash p{
+    font-size:12px;opacity:.7;margin:0;
+  }
+  @keyframes pulse{
+    0%,100%{transform:scale(1);opacity:1;}
+    50%{transform:scale(.94);opacity:.75;}
+  }
+</style>
+</head>
+<body>
+  <!-- Nhúng thẳng app GAS bằng iframe, giữ nguyên domain GitHub Pages nên khi mở
+       từ icon home-screen sẽ hiển thị full màn hình, không hiện thanh địa chỉ -->
+  <iframe id="appFrame"
+    src="https://script.google.com/macros/s/AKfycbzSzXojWwXO0rPLGda_1wDx3zonqXbva9skOCF4Mx8DwgZS227aC9YG7YpsRUMO7My-/exec"
+    onload="document.getElementById('splash').classList.add('hide')"></iframe>
+
+  <div id="splash">
+    <img src="icon3.png" alt="GSC OT Tracker">
+    <h1>GSC OT Tracker</h1>
+    <p>Đang tải...</p>
+  </div>
+</body>
+</html>
